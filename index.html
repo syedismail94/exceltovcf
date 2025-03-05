@@ -8,14 +8,49 @@
     <meta name="keywords" content="Excel to VCF, convert Excel to VCF, VCF converter, contact export, Excel contacts to VCF">
     <meta name="author" content="Excel to VCF Tool">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script type="application/ld+json">
-        {
-            "@context": "https://schema.org",
-            "@type": "WebSite",
-            "name": "Excel to VCF Converter",
-            "url": ""
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Excel to VCF Converter",
+  "url": "https://xcelvcf.keywordsfromurls.com/",
+  "description": "Convert Excel files to VCF format easily with our free online tool.",
+  "author": {
+    "@type": "Organization",
+    "name": "Excel to VCF Tool"
+  },
+  "faq": {
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How to use the Excel to VCF Converter?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Simply upload your Excel file and click the Convert & Download button to get your VCF file."
         }
-    </script>
+      },
+      {
+        "@type": "Question",
+        "name": "Is this tool free to use?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, our tool is completely free to use with no hidden charges."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I use this tool on mobile?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, our website is fully responsive and works on both mobile and desktop devices."
+        }
+      }
+    ]
+  }
+}
+</script>
+
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -247,22 +282,7 @@
             color: #333;
         }
     </style>
-    <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "Keywords from urls Extractor from sitemap Tool",
-  "url": "",
-  "description": "",
-  "mainEntityOfPage": "",
-  "potentialAction": {
-    "@type": "Action",
-    "name": "Extract Keywords",
-    "target": "",
-    "actionStatus": "ActiveActionStatus"
-  }
-}
-</script>
+ 
    
 </head>
 <body>
@@ -275,15 +295,15 @@
           </header>
     <div class="container">
         <h1>Excel to VCF converter </h1>
-        <p>Convert your Excel contacts into VCF format quickly and easily. Simply upload your file and download the VCF.</p>
+        <p>Convert your Excel contacts into VCF format quickly and easily. Simply upload your file and get the VCF.</p>
         <input type="file" id="fileInput" accept=".xls,.xlsx">
-        <button onclick="convertToVCF()">Convert & Download VCF</button>
+        <button onclick="convertToVCF()">Convert & Get VCF</button>
     </div>
 
     <div class="faq">
         <h2>Frequently Asked Questions</h2>
         <h3>How to use the Excel to VCF Converter?</h3>
-        <p>Simply upload your Excel file and click the Convert & Download button to get your VCF file.</p>
+        <p>Simply upload your Excel file and click the Convert & Get button to get your VCF file.</p>
         <h3>Is this tool free to use?</h3>
         <p>Yes, our tool is completely free to use with no hidden charges.</p>
         <h3>Can I use this tool on mobile?</h3>
@@ -292,40 +312,41 @@
 
   
 
-    <script>
+  <script>
         function convertToVCF() {
-            const fileInput = document.getElementById('fileInput').files[0];
-            if (!fileInput) {
-                alert("Please upload an Excel file");
+            const fileInput = document.getElementById('fileInput');
+            if (!fileInput.files.length) {
+                alert('Please select an Excel file first.');
                 return;
             }
-
+            
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 const data = new Uint8Array(e.target.result);
                 const workbook = XLSX.read(data, { type: 'array' });
                 const sheetName = workbook.SheetNames[0];
                 const sheet = workbook.Sheets[sheetName];
                 const jsonData = XLSX.utils.sheet_to_json(sheet);
-
-                let vcfContent = "";
+                
+                let vcfData = '';
                 jsonData.forEach(contact => {
-                    let name = contact.Name || "Unknown";
-                    let phone = contact.Phone || "";
-                    let email = contact.Email || "";
-
-                    vcfContent += `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nTEL:${phone}\nEMAIL:${email}\nEND:VCARD\n`;
+                    if (contact.Name && contact.Phone) {
+                        vcfData += `BEGIN:VCARD\nVERSION:3.0\nFN:${contact.Name}\nTEL:${contact.Phone}\nEND:VCARD\n`;
+                    }
                 });
-
-                const blob = new Blob([vcfContent], { type: 'text/vcard' });
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = "contacts.vcf";
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                
+                if (vcfData) {
+                    const blob = new Blob([vcfData], { type: 'text/vcard' });
+                    const url = URL.createObjectURL(blob);
+                    const downloadLink = document.getElementById('downloadLink');
+                    downloadLink.href = url;
+                    downloadLink.style.display = 'block';
+                    downloadLink.innerText = 'Download VCF';
+                } else {
+                    alert('No valid contacts found in the file.');
+                }
             };
-            reader.readAsArrayBuffer(fileInput);
+            reader.readAsArrayBuffer(fileInput.files[0]);
         }
     </script>
 </body>
